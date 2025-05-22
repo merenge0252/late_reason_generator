@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     const humorousTones = ['ユーモラスに', 'コミカルに', 'ふざけて'];
-    const isHumorousTone = humorousTones.includes(tone || ''); // humorousTorouS を修正済み
+    const isHumorousTone = humorousTones.includes(tone || '');
 
     // カジュアルな対象を判断するためのリスト
     const casualTargets = ['友人', '友達', '親友', '後輩']; // 必要に応じて追加
@@ -96,6 +96,9 @@ ${isHumorousTone ? 'ただし、トーンがユーモラスな場合は、実現
     const response = await result.response;
     const fullText = response.text();
 
+    // ここにログを追加
+    console.log("Full AI response text (raw):", fullText); // AIからの生テキスト応答
+    
     const excuses = [];
     const lines = fullText.split('\n');
     let currentExcuse: {
@@ -161,17 +164,24 @@ ${isHumorousTone ? 'ただし、トーンがユーモラスな場合は、実現
       excuses.push(currentExcuse);
     }
 
+    // ここにもログを追加
+    console.log("Parsed excuses array size:", excuses.length); // パースされた理由の総数
+
     excuses.sort((a, b) => b.score - a.score);
-    // 変更: top2Excuses から top3Excuses へ
     const top3Excuses = excuses.slice(0, 3); 
 
+    // そしてここにも
+    console.log("Top 3 excuses (after slice):", top3Excuses.length, top3Excuses); // スライス後の理由の数と内容
+
     if (top3Excuses.length > 0) {
-      // 理由の形式を変更: 各理由をオブジェクトの配列として返す
       const formattedReasons = top3Excuses.map((excuse, index) => ({
         id: `reason${index + 1}`,
         title: `理由${index + 1}`,
         text: excuse.text,
       }));
+
+      // 最終的にフロントエンドに返す直前にもログ
+      console.log("Final reasons sent to frontend:", formattedReasons.length, formattedReasons);
 
       return NextResponse.json({ reasons: formattedReasons });
     } else {
