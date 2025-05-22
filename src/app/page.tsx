@@ -81,7 +81,7 @@ export default function HomePage() {
     backgroundColor: '#f0f0f0',
     cursor: 'pointer',
     transition: 'background-color 0.2s, border-color 0.2s',
-    whiteSpace: 'nowrap' as 'nowrap',
+    whiteSpace: 'nowrap',
   };
 
   // 選択されたタブボタンのスタイル

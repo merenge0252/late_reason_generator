@@ -94,7 +94,7 @@ ${isHumorousTone ? 'ただし、トーンがユーモラスな場合は、実現
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    let fullText = response.text();
+    const fullText = response.text();
 
     const excuses = [];
     const lines = fullText.split('\n');
