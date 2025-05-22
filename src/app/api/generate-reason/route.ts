@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     const humorousTones = ['ユーモラスに', 'コミカルに', 'ふざけて'];
-    const isHumorousTone = humorousTones.includes(tone || '');
+    const isHumorousTone = humorousTones.includes(tone || ''); // humorousTorouS を修正済み
 
     // カジュアルな対象を判断するためのリスト
     const casualTargets = ['友人', '友達', '親友', '後輩']; // 必要に応じて追加
@@ -31,12 +31,12 @@ export async function POST(request: Request) {
 - タイトル： 遅刻の言い訳を提案するプロンプト
 - 依頼者条件： 遅刻をしてしまった人
 - 制作者条件： 遅刻の言い訳を思いつく能力を持った人
-- 目的と目標： ${target}が納得するような、**物的証拠を必要とせず、口頭での説明で十分に納得させられる**遅刻の言い訳を5個提案する
+- 目的と目標： ${target}が納得するような、**物的証拠を必要とせず、口頭での説明で十分に納得させられる**遅刻の言い訳を**10個**提案する
 
 # 実行指示:
 あなたは遅刻の言い訳を思いつく能力を持ったプロフェッショナルです。
 ${target}に対して、${delayTime}の遅刻という状況に従って、
-相手が納得するような遅刻の言い訳を5個提案してください。
+相手が納得するような遅刻の言い訳を**10個**提案してください。
 遅れた時間を最重要項目として、ステップバイステップで合理的な言い訳を具体的に考えてください。
 各言い訳は、具体的な状況を盛り込み、説得力のあるものにしてください。
 
@@ -48,7 +48,7 @@ ${target}に対して、${delayTime}の遅刻という状況に従って、
     ${tone === '簡潔に' ? '  - 「簡潔に」の場合、要点を絞り、余分な言葉を省いて短く、しかし必要な情報は含めてください。' : ''}
     ${tone === '恐縮して' ? '  - 「恐縮して」の場合、最大限の謝罪と恐縮の気持ちを表現し、相手への配慮を前面に出してください。' : ''}
 ${avoidPoliteLanguage ? '2.  **特に、敬語を使わず、タメ口やフランクな言葉遣いで理由を記述してください。**' : ''}
-${!isHumorousTone ? '2.  **物的証拠がなくても、口頭での説明で十分に納得させられる、日常的に起こりうる範囲の理由を優先して生成してください。交通事故、救急車の出動、入院、犯罪に巻き込まれるなどの極めて稀で深刻な事態は避けてください。**' : ''}
+${!isHumorousTone ? '2.  **物的証拠がなくても、口頭での説明で十分に納得させられる、日常的に起こりうる範囲の理由を優先して生成してください。交通事故、救急車の出動、入院、犯罪に巻き込まれるなど極めて稀で深刻な事態や、遅延証明書が必要になるような電車の遅延（例：30分以上の遅延）は避けてください。**' : ''}
 
 
 以下の情報も参考にしてください：
@@ -87,7 +87,7 @@ ${isHumorousTone ? 'ただし、トーンがユーモラスな場合は、実現
 - 余計な前置き、結論やまとめは書かないでください。
 - 指示の復唱はしないでください。
 - 自己評価はしないでください。
-- 参考フォーマットを厳密に守り、5個の言い訳を提案してください。
+- 参考フォーマットを厳密に守り、**10個**の言い訳を提案してください。
 `;
     
     console.log("Prompt sent to Gemini:", prompt);
@@ -162,17 +162,18 @@ ${isHumorousTone ? 'ただし、トーンがユーモラスな場合は、実現
     }
 
     excuses.sort((a, b) => b.score - a.score);
-    const top2Excuses = excuses.slice(0, 2);
+    // 変更: top2Excuses から top3Excuses へ
+    const top3Excuses = excuses.slice(0, 3); 
 
-    if (top2Excuses.length > 0) {
+    if (top3Excuses.length > 0) {
       // 理由の形式を変更: 各理由をオブジェクトの配列として返す
-      const formattedReasons = top2Excuses.map((excuse, index) => ({
+      const formattedReasons = top3Excuses.map((excuse, index) => ({
         id: `reason${index + 1}`,
         title: `理由${index + 1}`,
         text: excuse.text,
       }));
 
-      return NextResponse.json({ reasons: formattedReasons }); // 'reason'から'reasons'に変更
+      return NextResponse.json({ reasons: formattedReasons });
     } else {
       console.warn("No suitable excuses found or parsing failed. Full AI response:", fullText);
       return NextResponse.json({ error: '適切な遅刻理由を生成できませんでした。' }, { status: 500 });

@@ -8,11 +8,11 @@ export default function HomePage() {
   const [target, setTarget] = useState('');
   const [situation, setSituation] = useState('');
   const [tone, setTone] = useState('');
-  const [reasons, setReasons] = useState<{ id: string; title: string; text: string }[]>([]); // 複数の理由を保持する配列に変更
+  const [reasons, setReasons] = useState<{ id: string; title: string; text: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [copySuccess, setCopySuccess] = useState('');
-  const [activeTab, setActiveTab] = useState<string | null>(null); // アクティブなタブの状態管理
+  const [activeTab, setActiveTab] = useState<string | null>(null);
 
   // タブの選択肢を定義
   const delayTimeOptions = ['5分', '15分', '30分', '1時間', '2時間以上'];
@@ -23,9 +23,9 @@ export default function HomePage() {
     e.preventDefault();
     setLoading(true);
     setError('');
-    setReasons([]); // クリア
+    setReasons([]);
     setCopySuccess('');
-    setActiveTab(null); // タブ選択をリセット
+    setActiveTab(null);
 
     try {
       const res = await fetch('/api/generate-reason', {
@@ -43,9 +43,9 @@ export default function HomePage() {
       }
 
       const data = await res.json();
-      setReasons(data.reasons); // 生成された理由の配列をステートにセット
+      setReasons(data.reasons);
       if (data.reasons.length > 0) {
-        setActiveTab(data.reasons[0].id); // 最初の理由をデフォルトでアクティブにする
+        setActiveTab(data.reasons[0].id);
       }
     } catch (err) {
       setError('理由の生成に失敗しました。ネットワーク接続を確認するか、しばらくしてから再度お試しください。');
@@ -70,6 +70,16 @@ export default function HomePage() {
     }
   };
 
+  // input/textarea の基本スタイル
+  const inputBaseStyle = {
+    width: 'calc(100% - 16px)',
+    padding: '8px',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderColor: '#ddd',
+    borderRadius: '4px',
+  };
+
   // タブボタンのスタイル
   const tabButtonStyle = {
     padding: '8px 12px',
@@ -81,7 +91,7 @@ export default function HomePage() {
     backgroundColor: '#f0f0f0',
     cursor: 'pointer',
     transition: 'background-color 0.2s, border-color 0.2s',
-    whiteSpace: 'nowrap',
+    whiteSpace: 'nowrap' as 'nowrap', // as 'nowrap' は残してしまっても動作に影響はないが、Lintエラーは修正済み
   };
 
   // 選択されたタブボタンのスタイル
@@ -91,17 +101,6 @@ export default function HomePage() {
     color: 'white',
     borderColor: '#0070f3',
   };
-
-  // input/textarea の基本スタイル
-  const inputBaseStyle = {
-    width: 'calc(100% - 16px)',
-    padding: '8px',
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: '#ddd',
-    borderRadius: '4px',
-  };
-
 
   return (
     <main style={{ padding: '20px', maxWidth: '600px', margin: 'auto', fontFamily: 'sans-serif', lineHeight: '1.6' }}>
@@ -160,7 +159,7 @@ export default function HomePage() {
             id="situation"
             value={situation}
             onChange={(e) => setSituation(e.target.value)}
-            placeholder="例: 電車が遅延した(空欄でも可)"
+            placeholder="例: 電車が遅延した、急な腹痛など(空欄可)"
             rows={3}
             style={{ ...inputBaseStyle, resize: 'vertical' }}
           ></textarea>
@@ -209,7 +208,7 @@ export default function HomePage() {
       </form>
 
       {error && <p style={{ color: 'red', textAlign: 'center', marginTop: '20px' }}>{error}</p>}
-      {reasons.length > 0 && ( // reasonsが配列になったため
+      {reasons.length > 0 && (
         <div style={{ marginTop: '30px', borderTop: '1px solid #eee', paddingTop: '20px' }}>
           <h2 style={{ color: '#333' }}>生成された遅刻理由:</h2>
           
