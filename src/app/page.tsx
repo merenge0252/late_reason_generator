@@ -91,7 +91,7 @@ export default function HomePage() {
     backgroundColor: '#f0f0f0',
     cursor: 'pointer',
     transition: 'background-color 0.2s, border-color 0.2s',
-    whiteSpace: 'nowrap' as 'nowrap', // as 'nowrap' は残してしまっても動作に影響はないが、Lintエラーは修正済み
+    whiteSpace: 'nowrap',
   };
 
   // 選択されたタブボタンのスタイル
