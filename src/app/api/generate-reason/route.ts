@@ -114,6 +114,32 @@ ${isHumorousTone ? 'ただし、トーンがユーモラスな場合は、実現
     const scorePattern = /説得力:\s*(\d+),\s*実現可能性:\s*(\d+),\s*口頭説明の容易さ:\s*(\d+)/;
     const evidencePattern = /証拠を求められたら:\s*(.*)$/;
 
+    // 状況との関連性を評価する関数
+    function calculateRelevance(situation: string | undefined, excuseText: string): number {
+      if (!situation || situation.trim() === '') {
+        return 0; // 状況が提供されていない場合は関連性なし
+      }
+
+      // 簡易的なキーワード一致度で関連性を評価
+      const situationKeywords = situation.toLowerCase().split(/[\s、,。.]+/).filter(Boolean); // 空文字列を除外
+      const excuseKeywords = excuseText.toLowerCase().split(/[\s、,。.]+/).filter(Boolean); // 空文字列を除外
+
+      if (situationKeywords.length === 0) {
+        return 0; // 状況にキーワードがない場合
+      }
+
+      let matchingKeywords = 0;
+      for (const sKeyword of situationKeywords) {
+        // 部分一致でもカウントする（例: "電車" と "電車の遅延"）
+        if (excuseKeywords.some(eKeyword => eKeyword.includes(sKeyword) || sKeyword.includes(eKeyword))) {
+          matchingKeywords++;
+        }
+      }
+
+      // マッチしたキーワードの割合を返す (0から1の範囲)
+      return matchingKeywords / situationKeywords.length;
+    }
+
     for (const line of lines) {
       const trimmedLine = line.trim();
       const excuseMatch = trimmedLine.match(excusePattern);
@@ -137,6 +163,15 @@ ${isHumorousTone ? 'ただし、トーンがユーモラスな場合は、実現
           evidenceAdvice: '',
           score: 0,
         };
+
+        // ここで関連性スコアを計算し、scoreに加算
+        if (situation) { // situationが入力されている場合のみ評価に加える
+            const relevanceScore = calculateRelevance(situation, rawText);
+            // 関連性スコアの重み付け (例: 0.2は20%)
+            const relevanceWeight = 1.0; // 調整してください
+            currentExcuse.score += relevanceScore * 100 * relevanceWeight; // スコアは0-100に変換して加算
+        }
+
       } else if (scoreMatch && currentExcuse) {
         currentExcuse.説得力 = parseInt(scoreMatch[1], 10);
         currentExcuse.実現可能性 = parseInt(scoreMatch[2], 10);
@@ -150,8 +185,10 @@ ${isHumorousTone ? 'ただし、トーンがユーモラスな場合は、実現
             scoreWeightVerbalEase = 0.55; 
         }
 
-        currentExcuse.score = currentExcuse.説得力 * 0.4 + currentExcuse.実現可能性 * scoreWeightRealism + currentExcuse.verbalExplanationEase * scoreWeightVerbalEase;
+        // 基本スコア計算
+        currentExcuse.score += currentExcuse.説得力 * 0.4 + currentExcuse.実現可能性 * scoreWeightRealism + currentExcuse.verbalExplanationEase * scoreWeightVerbalEase;
         
+        // 口頭説明の容易さが低い場合のペナルティ
         if (!isHumorousTone && currentExcuse.verbalExplanationEase < 60) {
             currentExcuse.score *= 0.6;
         }
