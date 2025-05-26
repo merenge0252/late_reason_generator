@@ -145,6 +145,7 @@ ${(situation && !isHumorousTone) ? `提供された「具体的な状況」(${si
     let match;
     while ((match = fullExcuseBlockPattern.exec(processedText)) !== null) {
         const rawText = match[1].trim()
+            .replace(/^\d+\.\s*/, '') // ★★★ この行を追加して、行頭の "1. " や "4. " などを除去 ★★★
             .replace(/^\*\*\s*|\s*\*\*$/g, '') 
             .replace(/^[-\*#]\s*/g, '') 
             .replace(/[\u200B-\u200D\uFEFF]/g, ''); 
