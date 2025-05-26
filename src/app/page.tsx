@@ -55,7 +55,6 @@ export default function HomePage() {
     }
   };
 
-  // コピーボタンのハンドラー
   const handleCopy = (textToCopy: string) => {
     if (textToCopy) {
       navigator.clipboard.writeText(textToCopy)
@@ -70,45 +69,45 @@ export default function HomePage() {
     }
   };
 
-  // input/textarea の基本スタイル
-  const inputBaseStyle = {
+  const inputBaseStyle: React.CSSProperties = {
     width: 'calc(100% - 16px)',
     padding: '8px',
     borderWidth: '1px',
     borderStyle: 'solid',
-    borderColor: '#ddd',
+    borderColor: 'var(--border-color)',
     borderRadius: '4px',
+    backgroundColor: 'var(--input-bg)',
+    color: 'var(--input-text-color)',
   };
 
-  // タブボタンのスタイル
-  const tabButtonStyle = {
+  const tabButtonStyle: React.CSSProperties = {
     padding: '8px 12px',
     margin: '5px',
     borderWidth: '1px',
     borderStyle: 'solid',
-    borderColor: '#ddd',
+    borderColor: 'var(--border-color)',
     borderRadius: '4px',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: 'var(--button-bg)',
+    color: 'var(--button-text-color)',
     cursor: 'pointer',
-    transition: 'background-color 0.2s, border-color 0.2s',
+    transition: 'background-color 0.2s, border-color 0.2s, color 0.2s',
     whiteSpace: 'nowrap',
   };
 
-  // 選択されたタブボタンのスタイル
-  const selectedTabButtonStyle = {
+  const selectedTabButtonStyle: React.CSSProperties = {
     ...tabButtonStyle,
-    backgroundColor: '#0070f3',
-    color: 'white',
-    borderColor: '#0070f3',
+    backgroundColor: 'var(--primary-color)',
+    color: 'var(--primary-text-color)',
+    borderColor: 'var(--primary-color)',
   };
 
   return (
     <main style={{ padding: '20px', maxWidth: '600px', margin: 'auto', fontFamily: 'sans-serif', lineHeight: '1.6' }}>
-      <h1 style={{ textAlign: 'center', color: '#333' }}>遅刻理由ジェネレーター</h1>
-      <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '15px', backgroundColor: '#f9f9f9', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+      <h1 style={{ textAlign: 'center', color: 'var(--text-color)' }}>遅刻理由ジェネレーター</h1>
+      <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '15px', backgroundColor: 'var(--content-bg)', padding: '20px', borderRadius: '8px', boxShadow: 'var(--box-shadow)' }}>
 
         <div>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>遅刻時間:</label>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: 'var(--label-color)' }}>遅刻時間:</label>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
             {delayTimeOptions.map((option) => (
               <button
@@ -131,7 +130,7 @@ export default function HomePage() {
         </div>
 
         <div>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>報告相手:</label>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: 'var(--label-color)' }}>報告相手:</label>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
             {targetOptions.map((option) => (
               <button
@@ -154,7 +153,7 @@ export default function HomePage() {
         </div>
 
         <div>
-          <label htmlFor="situation" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>具体的な状況 (オプション):</label>
+          <label htmlFor="situation" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: 'var(--label-color)' }}>具体的な状況 (オプション):</label>
           <textarea
             id="situation"
             value={situation}
@@ -166,7 +165,7 @@ export default function HomePage() {
         </div>
 
         <div>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>トーン (オプション):</label>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: 'var(--label-color)' }}>トーン (オプション):</label>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
             {toneOptions.map((option) => (
               <button
@@ -193,8 +192,8 @@ export default function HomePage() {
           disabled={loading}
           style={{
             padding: '12px 20px',
-            backgroundColor: loading ? '#a0c7f8' : '#0070f3',
-            color: 'white',
+            backgroundColor: loading ? 'var(--disabled-bg)' : 'var(--primary-color)',
+            color: 'var(--primary-text-color)',
             border: 'none',
             borderRadius: '5px',
             cursor: loading ? 'not-allowed' : 'pointer',
@@ -207,13 +206,12 @@ export default function HomePage() {
         </button>
       </form>
 
-      {error && <p style={{ color: 'red', textAlign: 'center', marginTop: '20px' }}>{error}</p>}
+      {error && <p style={{ color: 'var(--error-color)', textAlign: 'center', marginTop: '20px' }}>{error}</p>}
       {reasons.length > 0 && (
-        <div style={{ marginTop: '30px', borderTop: '1px solid #eee', paddingTop: '20px' }}>
-          <h2 style={{ color: '#333' }}>生成された遅刻理由:</h2>
+        <div style={{ marginTop: '30px', borderTop: '1px solid var(--border-color)', paddingTop: '20px' }}>
+          <h2 style={{ color: 'var(--text-color)' }}>生成された遅刻理由:</h2>
           
-          {/* タブナビゲーション */}
-          <div style={{ display: 'flex', marginBottom: '15px', borderBottom: '1px solid #ddd' }}>
+          <div style={{ display: 'flex', marginBottom: '15px', borderBottom: '1px solid var(--border-color)', overflowX: 'auto' }}>
             {reasons.map((r) => (
               <button
                 key={r.id}
@@ -221,13 +219,15 @@ export default function HomePage() {
                 style={{
                   padding: '10px 15px',
                   border: 'none',
-                  borderBottom: activeTab === r.id ? '2px solid #0070f3' : 'none',
+                  borderBottom: activeTab === r.id ? `2px solid var(--primary-color)` : '2px solid transparent',
                   backgroundColor: 'transparent',
                   cursor: 'pointer',
                   fontWeight: activeTab === r.id ? 'bold' : 'normal',
-                  color: activeTab === r.id ? '#0070f3' : '#555',
+                  color: activeTab === r.id ? 'var(--primary-color)' : 'var(--secondary-text-color)',
                   fontSize: '1em',
-                  transition: 'color 0.2s, border-bottom 0.2s',
+                  transition: 'color 0.2s, border-bottom-color 0.2s',
+                  whiteSpace: 'nowrap', // Ensure tab titles don't wrap
+                  flexShrink: 0, // Prevent tabs from shrinking
                 }}
               >
                 {r.title}
@@ -235,18 +235,17 @@ export default function HomePage() {
             ))}
           </div>
 
-          {/* タブコンテンツ */}
           {reasons.map((r) => (
             activeTab === r.id && (
-              <div key={r.id} style={{ backgroundColor: '#f9f9f9', padding: '15px', borderRadius: '5px', border: '1px solid #ddd', fontSize: '1.1em', animation: 'fadeIn 0.3s forwards' }}>
-                <p style={{ whiteSpace: 'pre-wrap' }}>{r.text}</p>
+              <div key={r.id} style={{ backgroundColor: 'var(--content-bg)', padding: '15px', borderRadius: '5px', border: '1px solid var(--border-color)', fontSize: '1.1em', animation: 'fadeIn 0.3s forwards' }}>
+                <p style={{ whiteSpace: 'pre-wrap', color: 'var(--text-color)' }}>{r.text}</p>
                 <button
                   onClick={() => handleCopy(r.text)}
                   style={{
                     marginTop: '15px',
                     padding: '10px 15px',
-                    backgroundColor: '#28a745',
-                    color: 'white',
+                    backgroundColor: 'var(--success-color)',
+                    color: 'var(--success-text-color)',
                     border: 'none',
                     borderRadius: '5px',
                     cursor: 'pointer',
@@ -255,13 +254,104 @@ export default function HomePage() {
                 >
                   この理由をコピー
                 </button>
-                {copySuccess && <span style={{ marginLeft: '10px', color: '#28a745' }}>{copySuccess}</span>}
+                {copySuccess && <span style={{ marginLeft: '10px', color: 'var(--success-color)' }}>{copySuccess}</span>}
               </div>
             )
           ))}
         </div>
       )}
-      {/* フェードインアニメーションのスタイルを直接記述 */}
+      
+      <style jsx global>{`
+        :root {
+          --main-bg: white;
+          --content-bg: #f9f9f9;
+          --text-color: #222; /* Darker for better general contrast */
+          --secondary-text-color: #555;
+          --label-color: #333;
+          --border-color: #ddd;
+          --input-bg: white;
+          --input-text-color: #222;
+          --input-placeholder-color: #999;
+          --button-bg: #f0f0f0;
+          --button-text-color: #333;
+          --primary-color: #0070f3;
+          --primary-text-color: white;
+          --disabled-bg: #a0c7f8;
+          --success-color: #28a745;
+          --success-text-color: white;
+          --error-color: #d32f2f; /* Darker red for better accessibility */
+          --box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+          :root {
+            --main-bg: #121212;
+            --content-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --secondary-text-color: #b0b0b0;
+            --label-color: #c0c0c0;
+            --border-color: #444;
+            --input-bg: #2c2c2c;
+            --input-text-color: #e0e0e0;
+            --input-placeholder-color: #777;
+            --button-bg: #333;
+            --button-text-color: #e0e0e0;
+            --primary-color: #3b82f6; /* Lighter blue for dark mode */
+            --primary-text-color: white; 
+            --disabled-bg: #374151;
+            --success-color: #34d399; /* Lighter green */
+            --success-text-color: #101010; /* Dark text on lighter green */
+            --error-color: #f87171; /* Lighter red */
+            --box-shadow: 0 2px 4px rgba(0,0,0,0.4); /* Slightly more pronounced shadow for dark mode */
+          }
+
+          input::placeholder, 
+          textarea::placeholder {
+            color: var(--input-placeholder-color);
+            opacity: 1; /* Ensure placeholder is fully visible */
+          }
+
+          input, textarea { /* General input styles for dark mode */
+            background-color: var(--input-bg);
+            color: var(--input-text-color);
+            border-color: var(--border-color);
+          }
+           /* Style scrollbars for dark mode for a more consistent feel */
+          ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+          }
+          ::-webkit-scrollbar-track {
+            background: var(--content-bg); 
+          }
+          ::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+          }
+          ::-webkit-scrollbar-thumb:hover {
+            background: #6E6E6E;
+          }
+        }
+
+        body {
+          background-color: var(--main-bg);
+          color: var(--text-color);
+          transition: background-color 0.2s, color 0.2s;
+        }
+        
+        /* Apply placeholder color for light mode too using variables */
+        input::placeholder, 
+        textarea::placeholder {
+          color: var(--input-placeholder-color);
+        }
+
+        /* Ensure transitions on elements that change color based on theme */
+        h1, h2, label, p, div, button, input, textarea {
+          transition: color 0.2s, background-color 0.2s, border-color 0.2s;
+        }
+        /* More specific transitions are already on buttons and inputs, this is a general fallback */
+
+      `}</style>
       <style jsx>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(10px); }
